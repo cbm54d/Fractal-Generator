@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="d3.js"></script>
+    <script src="classes.js"></script>
+    <script type="text/javascript" src="relations.json"></script>
+    <link rel="stylesheet" src="main.css" href="main.css">
+    <script>
+        
+        var currentIt = new Array(1);
+        var relations = new Array(1);
+        var iterations = 0;
+        // This value helps calculate iterationLimit
+        var maxNumLines = 512;
+        var iterationLimit = 0;
+        
+        function initialize() {
+            
+            var info = JSON.parse(initInfo);
+            var rels = JSON.parse(relationInfo);
+            console.log(info.numRelations);
+            for( i = 0; i < info.numRelations; i++ ) {
+                relations[i] = new Relation(
+                    rels[i].scale,
+                    rels[i].rotate,
+                    rels[i].translate_r,
+                    rels[i].translate_theta
+                );
+            }
+            
+            currentIt[0] = new Line(
+                info.root_x1,
+                info.root_y1,
+                info.root_x2,
+                info.root_y2,
+                info.root_r,
+                info.root_theta
+            );
+            
+            document.body.innerHTML += "<svg id='fractalContainer' width='2000' height='2000'><line x1='" + info.root_x1 + "' y1='" + info.root_y1 + "' x2='" + info.root_x2 + "' y2='" + info.root_y2 + "' stroke='black' stroke-width='2' /></svg>";
+            
+            iterations = 0;
+            
+            iterationLimit = Math.floor(Math.log(maxNumLines) / Math.log(info.numRelations));
+            console.log("Iteration limit is " + iterationLimit + " iterations.");
+            
+        }
+        
+        function generate_branch(rel) {
+                        
+            var new_r = currentIt[0].r * relations[rel].scale;
+            
+            var new_theta = (currentIt[0].theta + relations[rel].rotate) % 360;
+            
+            var new_x1 = currentIt[0].x1 + (currentIt[0].r * relations[rel].translate_r) * (Math.cos((currentIt[0].theta + relations[rel].translate_theta) * (Math.PI/180)));
+            
+            var new_y1 = currentIt[0].y1 + currentIt[0].r * relations[rel].translate_r * (Math.sin((currentIt[0].theta + relations[rel].translate_theta) * (Math.PI/180)));
+            
+            var new_x2 = new_x1 + new_r * (Math.cos(new_theta * (Math.PI/180)));
+            
+            var new_y2 = new_y1 + new_r * (Math.sin(new_theta * (Math.PI/180)));
+            
+            var new_color = 'black';
+            /*switch(iterations % 6) {
+                case 0:
+                    new_color = 'red';
+                    break;
+                case 1:
+                    new_color = 'orange';
+                    break;
+                case 2:
+                    new_color = 'green';
+                    break;
+                case 3:
+                    new_color = 'darkturquoise';
+                    break;
+                case 4:
+                    new_color = 'blue';
+                    break;
+                case 5:
+                    new_color = 'purple';
+                    break;
+                default:
+                    new_color = 'black';
+                    break;
+            }*/
+            
+            var fractal = document.getElementById('fractalContainer');
+            fractal.innerHTML += "<line x1='" + new_x1 + "' y1='" + new_y1 + "' x2='" + new_x2 + "' y2='" + new_y2 + "' stroke='" + new_color + "' stroke-width='" + 2 + "' />";
+            
+            var newLine = new Line(new_x1, new_y1, new_x2, new_y2, new_r, new_theta);
+            
+            if( false ) {
+                console.log(currentIt[0].x1);
+                console.log(currentIt[0].y1);
+                console.log(currentIt[0].x2);
+                console.log(currentIt[0].y2);
+                console.log(currentIt[0].r);
+                console.log(currentIt[0].theta);
+
+                console.log(newLine.x1);
+                console.log(newLine.y1);
+                console.log(newLine.x2);
+                console.log(newLine.y2);
+                console.log(newLine.r);
+                console.log(newLine.theta);
+            }
+            
+            var junk = currentIt.push(newLine);
+            console.log("length of currentIt = " + currentIt.length);
+        }
+        
+        function iterate() {
+            var button = document.getElementById("iterateButton");
+            if( iterations < iterationLimit ) {
+                console.log("Iterate is running...");
+                button.setAttribute("value", "Iterating...");
+
+                for( i = 0; i < (relations.length ** iterations); i++ ) {
+                    for( j = 0; j < relations.length; j++ ) {
+                        generate_branch(j);
+                    }
+
+                    var junk = currentIt.shift();
+                    console.log("length of currentIt = " + currentIt.length);   
+                }
+
+                iterations++;
+
+                console.log("COMPLETED ITERATION " + iterations);
+                if( iterations < iterationLimit ) {
+                    button.setAttribute("value", "Iterate");
+                } else {
+                    button.setAttribute("value", "Max iterations reached");
+                }
+            }
+        }
+    </script>
+</head>
+
+<body onload="initialize();">
+    
+    <input id="iterateButton" type="button" value="Iterate" onclick="iterate();"  />
+    
+</body>
+</html>
