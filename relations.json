@@ -1,8 +1,12 @@
 initInfo = '{ "numRelations":2, "root_x1":640, "root_y1":0, "root_x2":640, "root_y2":180, "root_r":180, "root_theta":90 }';
 
+topStraight = '{ "numRelations":2, "root_x1":640, "root_y1":0, "root_x2":640, "root_y2":180, "root_r":180, "root_theta":90 }';
+
 bigInitInfo = '{ "numRelations":2, "root_x1":640, "root_y1":280, "root_x2":400, "root_y2":640, "root_r":432.66615305568, "root_theta":123.96006752598 }';
 
 smallInitInfo = '{ "numRelations":2, "root_x1":640, "root_y1":280, "root_x2":520, "root_y2":460, "root_r":216.33307652784, "root_theta":123.96006752598 }';
+
+
 
 relationInfo = '[{"name":"leftBranch", "scale":0.70710678118, "rotate":45, "translate_r":1, "translate_theta":0 },{"name":"rightBranch", "scale":0.70710678118, "rotate":315, "translate_r":1, "translate_theta":0 }]';
 

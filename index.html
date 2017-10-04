@@ -14,11 +14,15 @@
         var maxNumLines = 256;
         var iterationLimit = 0;
         
-        function initialize() {
-            
-            var info = JSON.parse(initInfo);
-            var rels = JSON.parse(relationInfo);
+        function initialize(i_init, i_relation) {
+
+            var info = JSON.parse(i_init);
+            var rels = JSON.parse(i_relation);
             console.log(info.numRelations);
+            
+            while( relations.length != 0 ) {
+                relations.shift();
+            }
             for( i = 0; i < info.numRelations; i++ ) {
                 relations[i] = new Relation(
                     rels[i].scale,
@@ -28,6 +32,9 @@
                 );
             }
             
+            while( currentIt.length != 0 ) {
+                currentIt.shift();
+            }
             currentIt[0] = new Line(
                 info.root_x1,
                 info.root_y1,
@@ -37,7 +44,8 @@
                 info.root_theta
             );
             
-            document.body.innerHTML += "<svg id='fractalContainer' width='2000' height='2000'><line x1='" + info.root_x1 + "' y1='" + info.root_y1 + "' x2='" + info.root_x2 + "' y2='" + info.root_y2 + "' stroke='black' stroke-width='2' /></svg>";
+            var fractal = document.getElementById("fractalWrapper");
+            fractal.innerHTML = "<svg id='fractalContainer' width='2000' height='2000'><line x1='" + info.root_x1 + "' y1='" + info.root_y1 + "' x2='" + info.root_x2 + "' y2='" + info.root_y2 + "' stroke='black' stroke-width='2' /></svg>";
             
             iterations = 0;
             
@@ -138,9 +146,14 @@
     </script>
 </head>
 
-<body onload="initialize();">
-    
-    <input id="iterateButton" type="button" value="Iterate" onclick="iterate();"  />
+<body onload="initialize(initInfo, relationInfo);">
+    <div id="inputWrapper">
+        <input id="iterateButton" type="button" value="Iterate" class="sideButton" onclick="iterate();"  />
+        <input type="button" value="Inverted K" class="sideButton" onclick="initialize(bigInitInfo, halfInvertedK45);"  />
+        <input type="button" value="Binary Tree" class="sideButton" onclick="initialize(topStraight, binaryTree);"  />
+        <input id="iterateButton" type="button" value="Half Inverted Binary Tree" class="sideButton" onclick="initialize(smallInitInfo, halfInvertedBinaryTree);"  />
+    </div>
+    <div id="fractalWrapper"></div>
     
 </body>
 </html>
